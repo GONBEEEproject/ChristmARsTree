@@ -46,8 +46,7 @@ class AppModel {
 
     private var arkitSession = ARKitSession()
     private var objectTrackingProvider: ObjectTrackingProvider?
-    private var worldSensingAuthorizationStatus = ARKitSession
-        .AuthorizationStatus.notDetermined
+    private var worldSensingAuthorizationStatus = ARKitSession.AuthorizationStatus.notDetermined
 
     let referenceObjectLoader = ReferenceObjectLoader()
 
@@ -104,12 +103,6 @@ class AppModel {
         }
     }
 
-    private func calculateWindow(for distance: Float) -> Float {
-        let window = 0.35 - (distance / 0.5) * 0.3
-
-        return window
-    }
-
     private func processObjectUpdates(with rootEntity: Entity) async {
         guard let objectTrackingProvider else {
             print(
@@ -128,25 +121,27 @@ class AppModel {
                 anchorReferences[id] = anchor
                 
                 let model: Entity? =
-                    referenceObjectLoader.usdzsPerReferenceObjectID[
-                        anchor.referenceObject.id]
+                    referenceObjectLoader.usdzsPerReferenceObjectID[anchor.referenceObject.id]
+
                 let visualization = await ObjectAnchorVisualization(
                     for: anchor,
                     withModel: model,
                     appModel: self)
+
                 objectVisualizations[id] = visualization
                 rootEntity.addChild(visualization.entity)
+
             case .updated:
 
                 anchorReferences[id] = anchor
-
                 objectVisualizations[id]?.update(with: anchor)
+
             case .removed:
 
                 anchorReferences.removeValue(forKey: id)
-
                 objectVisualizations[id]?.entity.removeFromParent()
                 objectVisualizations.removeValue(forKey: id)
+
             }
         }
     }

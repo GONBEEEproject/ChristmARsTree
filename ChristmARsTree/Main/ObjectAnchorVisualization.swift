@@ -21,10 +21,6 @@ class ObjectAnchorVisualization {
 
     private var appModel: AppModel
 
-    private let textBaseHeight: Float = 0.08
-    private let alpha: CGFloat = 0.7
-    private let axisScale: Float = 0.05
-
     init(
         for anchor: ObjectAnchor,
         withModel model: Entity? = nil,
@@ -62,7 +58,18 @@ class ObjectAnchorVisualization {
         case .VisionProCase:
             entity.addChild(model)
         case .ChristmasBlack:
-            entity.addChild(model)
+
+            guard
+                let scene = try? await Entity(
+                    named: "ChristmasTreeScene",
+                    in: realityKitContentBundle)
+            else {
+                print("Unable to load CaseWithCarScene")
+                self.entity = entity
+                return
+            }
+            entity.addChild(scene)
+
         }
 
         entity.transform = Transform(matrix: anchor.originFromAnchorTransform)

@@ -69,7 +69,6 @@ class ObjectAnchorVisualization {
                 return
             }
             entity.addChild(scene)
-
         }
 
         entity.transform = Transform(matrix: anchor.originFromAnchorTransform)

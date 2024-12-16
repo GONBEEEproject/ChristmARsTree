@@ -40,13 +40,9 @@ struct ContentView: View {
             print("HomeView scene phase: \(scenePhase)")
             if scenePhase == .active {
                 Task {
-                    // When returning from the background, check if the authorization has changed.
                     await appModel.queryWorldSensingAuthorization()
                 }
             } else {
-                // Make sure to leave the immersive space if this view is no longer active
-                // - such as when a person closes this view - otherwise they may be stuck
-                // in the immersive space without the controls this view provides.
                 if appModel.immersiveSpaceState == .open {
                     Task {
                         await dismissImmersiveSpace()
@@ -55,7 +51,6 @@ struct ContentView: View {
             }
         }
         .onChange(of: appModel.providersStoppedWithError, { _, providersStoppedWithError in
-            // Immediately close the immersive space if an error occurs.
             if providersStoppedWithError {
                 if appModel.immersiveSpaceState == .open {
                     Task {
@@ -67,17 +62,10 @@ struct ContentView: View {
             }
         })
         .task {
-            // Ask for authorization before a person attempts to open the immersive space.
-            // This gives the app opportunity to respond gracefully if authorization isn't granted.
             if appModel.allRequiredProvidersAreSupported {
                 await appModel.requestWorldSensingAuthorization()
             }
         }
-//        .task {
-//            // Start monitoring for changes in authorization, in case a person brings the
-//            // Settings app to the foreground and changes authorizations there.
-//            await appModel.monitorSessionEvents()
-//        }
     }
 }
 
